@@ -53,7 +53,7 @@ const Application = () => {
     }
 
     setIsLoading(true); // Start loader
-    const toastId = toast.loading("Submitting your application...");
+    const toastId = toast.loading("Submitting your application 👩‍🎓👨‍🎓...");
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);

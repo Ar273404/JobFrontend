@@ -23,6 +23,7 @@ const PostJob = () => {
   const [salaryTo, setSalaryTo] = useState("");
   const [fixedSalary, setFixedSalary] = useState("");
   const [salaryType, setSalaryType] = useState("default");
+   const [loading, setIsLoading] = useState(false);
 
   const { isAuthorized, user } = useContext(Context);
   const navigate = useNavigate();
@@ -35,7 +36,8 @@ const PostJob = () => {
 
   const handleJobPost = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true); // Start loader
+    const toastId = toast.loading("Posting Your Job 📢📢...");
     const jobData = {
       title,
       description,
@@ -53,19 +55,27 @@ const PostJob = () => {
     }
 
     try {
-      const res = await axios.post(
-        `${url}/job/post`,
-        jobData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      toast.success(res.data.message);
+      const res = await axios.post(`${url}/job/post`, jobData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+       toast.dismiss(toastId);
+       toast.success(res.data.message);
+      // Reset form fields
+      setTitle("");
+      setDescription("");
+      setCountry("");
+      setCategory("");
+      setCity("");
+      setLocation("");
+      setSalaryFrom("");
+      setSalaryTo("");
+      setFixedSalary("");
+      setSalaryType("default");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "An error occurred");
     }
   };
 
@@ -79,6 +89,7 @@ const PostJob = () => {
               <FaUser className="icon" />
               <input
                 type="text"
+                name="jobTitle"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Job Title"
@@ -87,6 +98,7 @@ const PostJob = () => {
             <div className="input-group">
               <FaBriefcase className="icon" />
               <select
+                name="jobCategory"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}>
                 <option value="">Select Category</option>
@@ -112,6 +124,14 @@ const PostJob = () => {
                   Software Development
                 </option>
                 <option value="Data Entry Operator">Data Entry Operator</option>
+                <option value="Digital Marketing">Digital Marketing</option>
+                <option value="Blockchain Development">
+                  Blockchain Development
+                </option>
+                <option value="Content Writing">Content Writing</option>
+                <option value="DevOps Engineering">DevOps Engineering</option>
+                <option value="UI/UX Design">UI/UX Design</option>
+                <option value="Quality Assurance">Quality Assurance</option>
               </select>
             </div>
           </div>
@@ -120,6 +140,7 @@ const PostJob = () => {
               <FaMapMarkerAlt className="icon" />
               <input
                 type="text"
+                name="jobCountry"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 placeholder="Country"
@@ -129,6 +150,7 @@ const PostJob = () => {
               <FaMapMarkerAlt className="icon" />
               <input
                 type="text"
+                name="jobCity"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City"
@@ -139,6 +161,7 @@ const PostJob = () => {
             <FaMapMarkerAlt className="icon" />
             <input
               type="text"
+              name="jobLocation"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="Location"
@@ -146,6 +169,7 @@ const PostJob = () => {
           </div>
           <div className="salary_wrapper">
             <select
+              name="salaryType"
               value={salaryType}
               onChange={(e) => setSalaryType(e.target.value)}>
               <option value="default">Select Salary Type</option>
@@ -160,6 +184,7 @@ const PostJob = () => {
                   <FaDollarSign className="icon" />
                   <input
                     type="number"
+                    name="fixedSalary"
                     placeholder="Enter Fixed Salary"
                     value={fixedSalary}
                     onChange={(e) => setFixedSalary(e.target.value)}
@@ -171,6 +196,7 @@ const PostJob = () => {
                     <FaRegMoneyBillAlt className="icon" />
                     <input
                       type="number"
+                      name="salaryFrom"
                       placeholder="Salary From"
                       value={salaryFrom}
                       onChange={(e) => setSalaryFrom(e.target.value)}
@@ -180,6 +206,7 @@ const PostJob = () => {
                     <FaRegMoneyBillAlt className="icon" />
                     <input
                       type="number"
+                      name="salaryTo"
                       placeholder="Salary To"
                       value={salaryTo}
                       onChange={(e) => setSalaryTo(e.target.value)}
@@ -191,6 +218,7 @@ const PostJob = () => {
           </div>
           <div className="input-group">
             <textarea
+              name="jobDescription"
               rows="5"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
