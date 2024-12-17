@@ -19,7 +19,7 @@ const Application = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [resume, setResume] = useState(null); // Change to null initially
-  const [loading, setIsLoading] = useState(false); // Track form submission loading state
+  // const [loading, setIsLoading] = useState(false); // Track form submission loading state
   const { isAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
 
@@ -52,7 +52,7 @@ const Application = () => {
       return;
     }
 
-    setIsLoading(true); // Start loader
+    // setIsLoading(true); // Start loader
     const toastId = toast.loading("Submitting your application 👩‍🎓👨‍🎓...");
     const formData = new FormData();
     formData.append("name", name);
@@ -64,16 +64,12 @@ const Application = () => {
     formData.append("jobId", id);
 
     try {
-      const { data } = await axios.post(
-        `${url}/application/post`,
-        formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await axios.post(`${url}/application/post`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.dismiss(toastId);
       toast.success(data.message);
 
@@ -88,9 +84,10 @@ const Application = () => {
     } catch (e) {
       toast.dismiss(toastId);
       toast.error(e.response?.data?.message || "Something went wrong");
-    } finally {
-      setIsLoading(false); // Stop loader
-    }
+    } 
+    // finally {
+    //   setIsLoading(false); // Stop loader
+    // }
   };
 
   return (
